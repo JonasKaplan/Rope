@@ -455,15 +455,7 @@ RopeString_t* RopeTrimStart_n(RopeString_t* string) {
         }
         whitespaceCount++;
     }
-    size_t length = string->length - whitespaceCount;
-    char* content = malloc(sizeof(char) * length);
-    memcpy(content, string->content + whitespaceCount, length);
-    RopeString_t* new = RopeNewString(content, length);
-    if (!new) {
-        return NULL;
-    }
-    free(content);
-    return new;
+    return RopeRemoveSlice_n(string, 0, whitespaceCount - 1);
 }
 
 RopeString_t* RopeTrimEnd_n(RopeString_t* string) {
@@ -474,15 +466,7 @@ RopeString_t* RopeTrimEnd_n(RopeString_t* string) {
         }
         whitespaceCount++;
     }
-    size_t length = string->length - whitespaceCount;
-    char* content = malloc(sizeof(char) * length);
-    memcpy(content, string->content, length);
-    RopeString_t* new = RopeNewString(content, length);
-    if (!new) {
-        return NULL;
-    }
-    free(content);
-    return new;
+    return RopeRemoveSlice_n(string, string->length - whitespaceCount, string->length - 1);
 }
 
 RopeString_t* RopeTrimAll_n(RopeString_t* string) {
