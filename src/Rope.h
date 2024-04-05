@@ -73,6 +73,8 @@ RopeString_t* RopeInsertAt_n(RopeString_t* string, size_t index, RopeString_t* r
 
 RopeString_t* RopeSlice_n(RopeString_t* string, size_t startIndex, size_t endIndex);
 
+RopeString_t* RopeConcat_n(RopeString_t* prefix, RopeString_t* suffix);
+
 RopeString_t* RopeToLowerCase_n(RopeString_t* string);
 
 RopeString_t* RopeToUpperCase_n(RopeString_t* string);

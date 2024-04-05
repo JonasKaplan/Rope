@@ -421,6 +421,19 @@ RopeString_t* RopeSlice_n(RopeString_t* string, size_t startIndex, size_t endInd
     return new;
 }
 
+RopeString_t* RopeConcat_n(RopeString_t* prefix, RopeString_t* suffix) {
+    size_t length = prefix->length + suffix->length;
+    char* content = malloc(sizeof(char) * length);
+    if (!content) {
+        return NULL;
+    }
+    memcpy(content, prefix->content, prefix->length);
+    memcpy(content + prefix->length, suffix->content, suffix->length);
+    RopeString_t* new = RopeNewString(content, length);
+    free(content);
+    return new;
+}
+
 RopeString_t* RopeToLowerCase_n(RopeString_t* string) {
     RopeString_t* new = RopeNewString(string->content, string->length);
     if (!new) {
