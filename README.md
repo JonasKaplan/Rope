@@ -1,5 +1,5 @@
 # Rope
-Rope is a simple string manipulation library for the C programming language. The goal with this project was to implement some version of every string manipulaiton function available in the JS standard library, and clean up some of the grabage that comes with that notion. As of right now, this project is still in its infancy, but it is in working condition.
+Rope is a simple string manipulation library for the C programming language. The goal with this project was to implement some version of every string manipulation function available in the JS standard library, and clean up some of the grabage that comes with that notion. As of right now, this project is still in its infancy, but it is in working condition.
 # Usage
 The core of this library is a simple struct:
 ```c
