@@ -30,6 +30,21 @@ RopeString_t* RopeStringFromLiteral(char* string) {
     return RopeNewString(string, strlen(string));
 }
 
+void RopeSetStringContent(RopeString_t* string, char* content, size_t contentLength) {
+    string->content = realloc(string->content, sizeof(char) * (contentLength + 1));
+    if (!string->content) {
+        printf("Memory allocation failure!\n");
+        return;
+    }
+    memcpy(string->content, content, contentLength);
+    string->content[contentLength] = '\0';
+    string->length = contentLength;
+}
+
+void RopeSetStringContentFromLiteral(RopeString_t* string, char* content) {
+    RopeSetStringContent(string, content, strlen(content));
+}
+
 void RopeDisposeString(RopeString_t* string) {
     free(string->content);
     free(string);
@@ -243,18 +258,19 @@ RopeString_t** RopeSplitAt(RopeString_t* string, size_t index) {
 
 RopeString_t* RopeRepeat_n(RopeString_t* string, size_t count) {
     if (count == 0) {
-        return RopeNewString("", 0);
+        return RopeStringFromLiteral("");
     }
     size_t length = string->length * count;
-    char* repeatedString = malloc(sizeof(char) * length);
-    if (!repeatedString) {
+    char* content = malloc(sizeof(char) * length);
+    if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     for (int i = 0; i < count; i++) {
-        memcpy(repeatedString + i * string->length, string->content, string->length);
+        memcpy(content + i * string->length, string->content, string->length);
     }
-    RopeString_t* new = RopeNewString(repeatedString, length);
-    free(repeatedString);
+    RopeString_t* new = RopeNewString(content, length);
+    free(content);
     return new;
 }
 
@@ -274,6 +290,7 @@ RopeString_t* RopeRemoveSlice_n(RopeString_t* string, size_t startIndex, size_t 
     size_t length = string->length - sliceLength;
     char* content = malloc(sizeof(char) * length);
     if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     memcpy(content, string->content, startIndex);
@@ -421,19 +438,6 @@ RopeString_t* RopeSlice_n(RopeString_t* string, size_t startIndex, size_t endInd
     return new;
 }
 
-RopeString_t* RopeConcat_n(RopeString_t* prefix, RopeString_t* suffix) {
-    size_t length = prefix->length + suffix->length;
-    char* content = malloc(sizeof(char) * length);
-    if (!content) {
-        return NULL;
-    }
-    memcpy(content, prefix->content, prefix->length);
-    memcpy(content + prefix->length, suffix->content, suffix->length);
-    RopeString_t* new = RopeNewString(content, length);
-    free(content);
-    return new;
-}
-
 RopeString_t* RopeToLowerCase_n(RopeString_t* string) {
     RopeString_t* new = RopeNewString(string->content, string->length);
     if (!new) {
@@ -468,7 +472,15 @@ RopeString_t* RopeTrimStart_n(RopeString_t* string) {
         }
         whitespaceCount++;
     }
-    return RopeRemoveSlice_n(string, 0, whitespaceCount - 1);
+    size_t length = string->length - whitespaceCount;
+    char* content = malloc(sizeof(char) * length);
+    memcpy(content, string->content + whitespaceCount, length);
+    RopeString_t* new = RopeNewString(content, length);
+    if (!new) {
+        return NULL;
+    }
+    free(content);
+    return new;
 }
 
 RopeString_t* RopeTrimEnd_n(RopeString_t* string) {
@@ -479,7 +491,15 @@ RopeString_t* RopeTrimEnd_n(RopeString_t* string) {
         }
         whitespaceCount++;
     }
-    return RopeRemoveSlice_n(string, string->length - whitespaceCount, string->length - 1);
+    size_t length = string->length - whitespaceCount;
+    char* content = malloc(sizeof(char) * length);
+    memcpy(content, string->content, length);
+    RopeString_t* new = RopeNewString(content, length);
+    if (!new) {
+        return NULL;
+    }
+    free(content);
+    return new;
 }
 
 RopeString_t* RopeTrimAll_n(RopeString_t* string) {

@@ -14,14 +14,13 @@ typedef struct RopeIntArray {
     size_t length;
 } RopeIntArray_t;
 
-typedef struct RopeStringArray {
-    RopeString_t** content;
-    size_t length;
-} RopeStringArray_t;
-
 RopeString_t* RopeNewString(char* string, size_t stringLength);
 
 RopeString_t* RopeStringFromLiteral(char* string);
+
+void RopeSetStringContent(RopeString_t* string, char* content, size_t contentLength);
+
+void RopeSetStringContentFromLiteral(RopeString_t* string, char* content);
 
 void RopeDisposeString(RopeString_t* string);
 
@@ -73,8 +72,6 @@ RopeString_t* RopeInsertAt_n(RopeString_t* string, size_t index, RopeString_t* r
 
 RopeString_t* RopeSlice_n(RopeString_t* string, size_t startIndex, size_t endIndex);
 
-RopeString_t* RopeConcat_n(RopeString_t* prefix, RopeString_t* suffix);
-
 RopeString_t* RopeToLowerCase_n(RopeString_t* string);
 
 RopeString_t* RopeToUpperCase_n(RopeString_t* string);
@@ -92,11 +89,5 @@ RopeIntArray_t* RopeNewIntArray(int* array, size_t arrayLength);
 void RopeDisposeIntArray(RopeIntArray_t* array);
 
 bool RopeIntArraysEqual(RopeIntArray_t* array1, RopeIntArray_t* array2);
-
-RopeStringArray_t* RopeNewStringArray(RopeString_t** array, size_t arrayLength);
-
-void RopeDisposeStringArray(RopeStringArray_t* array);
-
-bool RopeStringArraysEqual(RopeStringArray_t* array1, RopeStringArray_t* array2);
 
 #endif
