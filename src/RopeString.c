@@ -186,6 +186,7 @@ RopeIntArray_t* RopeAllIndicesOf(RopeString_t* string, RopeString_t* substring) 
     }
     size_t* content = malloc(sizeof(size_t) * string->length);
     if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
 
@@ -207,17 +208,23 @@ RopeIntArray_t* RopeAllIndicesOf(RopeString_t* string, RopeString_t* substring) 
 
     RopeIntArray_t* new = RopeNewIntArray(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
 RopeString_t** RopeSplitAt(RopeString_t* string, size_t index) {
     RopeString_t** array = malloc(sizeof(*array) * 2);
     if (!array) {
+        printf("Memory allocation failure!\n");
         return NULL;
     } else if (index == 0) {
         array[0] = RopeNewString("", 0);
         array[1] = RopeCloneString(string);
         if (!array[0] || !array[1]) {
+            printf("Memory allocation failure!\n");
             free(array);
             return NULL;
         }
@@ -226,6 +233,7 @@ RopeString_t** RopeSplitAt(RopeString_t* string, size_t index) {
         array[0] = RopeCloneString(string);
         array[1] = RopeNewString("", 0);
         if (!array[0] || !array[1]) {
+            printf("Memory allocation failure!\n");
             free(array);
             return NULL;
         }
@@ -234,11 +242,14 @@ RopeString_t** RopeSplitAt(RopeString_t* string, size_t index) {
     size_t length = index;
     char* content = malloc(sizeof(char) * string->length);
     if (!content) {
+        printf("Memory allocation failure!\n");
+        free(array);
         return NULL;
     }
     memcpy(content, string->content, length);
     array[0] = RopeNewString(content, length);
     if (!array[0]) {
+        printf("Memory allocation failure!\n");
         free(array);
         free(content);
         return NULL;
@@ -247,6 +258,7 @@ RopeString_t** RopeSplitAt(RopeString_t* string, size_t index) {
     memcpy(content, string->content + index, length);
     array[1] = RopeNewString(content, length);
     if (!array[1]) {
+        printf("Memory allocation failure!\n");
         RopeDisposeString(array[0]);
         free(array);
         free(content);
@@ -271,6 +283,10 @@ RopeString_t* RopeRepeat_n(RopeString_t* string, size_t count) {
     }
     RopeString_t* new = RopeNewString(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
@@ -297,6 +313,10 @@ RopeString_t* RopeRemoveSlice_n(RopeString_t* string, size_t startIndex, size_t 
     memcpy(content + startIndex, string->content + endIndex + 1, string->length - endIndex - 1);
     RopeString_t* new = RopeNewString(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
@@ -322,6 +342,7 @@ RopeString_t* RopeRemoveAll_n(RopeString_t* string, RopeString_t* target) {
     RopeIntArray_t* indices = RopeAllIndicesOf(string, target);
     char* content = malloc(sizeof(char) * string->length);
     if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     int i, j;
@@ -342,10 +363,11 @@ RopeString_t* RopeRemoveAll_n(RopeString_t* string, RopeString_t* target) {
     }
     RopeDisposeIntArray(indices);
     RopeString_t* new = RopeNewString(content, length);
+    free(content);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
-    free(content);
     return new;
 }
 
@@ -357,6 +379,7 @@ RopeString_t* RopeReplaceAt_n(RopeString_t* string, size_t index, size_t chars, 
     size_t length = string->length - chars + replacement->length;
     char* content = malloc(sizeof(char) * length);
     if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     memcpy(content, string->content, index);
@@ -364,6 +387,10 @@ RopeString_t* RopeReplaceAt_n(RopeString_t* string, size_t index, size_t chars, 
     memcpy(content + index + replacement->length, string->content + index + chars, string->length - index - chars);
     RopeString_t* new = RopeNewString(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
@@ -389,6 +416,10 @@ RopeString_t* RopeReplaceAll_n(RopeString_t* string, RopeString_t* target, RopeS
         return string;
     }
     RopeString_t* new = RopeCloneString(string);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     RopeString_t* old;
     size_t index = RopeFirstIndexOf(new, target);
     while (index != -1) {
@@ -396,6 +427,7 @@ RopeString_t* RopeReplaceAll_n(RopeString_t* string, RopeString_t* target, RopeS
         new = RopeReplaceAt_n(new, index, target->length, replacement);
         RopeDisposeString(old);
         if (!new) {
+            printf("Memory allocation failure!\n");
             return NULL;
         }
         index = RopeFirstIndexOf(new, target);
@@ -408,6 +440,7 @@ RopeString_t* RopeInsertAt_n(RopeString_t* string, size_t index, RopeString_t* r
     size_t length = string->length + replacement->length;
     char* content = malloc(sizeof(char) * length);
     if (!content) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     memcpy(content, string->content, index);
@@ -415,6 +448,10 @@ RopeString_t* RopeInsertAt_n(RopeString_t* string, size_t index, RopeString_t* r
     memcpy(content + index + replacement->length, string->content + index, string->length - index);
     RopeString_t* new = RopeNewString(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
@@ -432,15 +469,24 @@ RopeString_t* RopeSlice_n(RopeString_t* string, size_t startIndex, size_t endInd
     }
     size_t length = endIndex - startIndex + 1;
     char* content = malloc(sizeof(char) * length);
+    if (!content) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     memcpy(content, string->content + startIndex, length);
     RopeString_t* new = RopeNewString(content, length);
     free(content);
+    if (!new) {
+        printf("Memory allocation failure!\n");
+        return NULL;
+    }
     return new;
 }
 
 RopeString_t* RopeToLowerCase_n(RopeString_t* string) {
     RopeString_t* new = RopeNewString(string->content, string->length);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     for (int i = 0; i < new->length; i++) {
@@ -454,6 +500,7 @@ RopeString_t* RopeToLowerCase_n(RopeString_t* string) {
 RopeString_t* RopeToUpperCase_n(RopeString_t* string) {
     RopeString_t* new = RopeNewString(string->content, string->length);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
     for (int i = 0; i < new->length; i++) {
@@ -476,10 +523,11 @@ RopeString_t* RopeTrimStart_n(RopeString_t* string) {
     char* content = malloc(sizeof(char) * length);
     memcpy(content, string->content + whitespaceCount, length);
     RopeString_t* new = RopeNewString(content, length);
+    free(content);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
-    free(content);
     return new;
 }
 
@@ -495,10 +543,11 @@ RopeString_t* RopeTrimEnd_n(RopeString_t* string) {
     char* content = malloc(sizeof(char) * length);
     memcpy(content, string->content, length);
     RopeString_t* new = RopeNewString(content, length);
+    free(content);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
-    free(content);
     return new;
 }
 
@@ -512,10 +561,11 @@ RopeString_t* RopeTrimAll_n(RopeString_t* string) {
         }
     }
     RopeString_t* new = RopeNewString(content, length);
+    free(content);
     if (!new) {
+        printf("Memory allocation failure!\n");
         return NULL;
     }
-    free(content);
     return new;
 }
 
